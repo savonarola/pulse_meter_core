@@ -1,5 +1,3 @@
-require 'pulse-meter'
-
 module PulseMeter
   class Observer
   extend PulseMeter::Mixins::Utils

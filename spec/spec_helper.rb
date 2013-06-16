@@ -8,10 +8,8 @@ Bundler.require(:default, :test, :development)
 
 SimpleCov.start
 
-require 'pulse-meter'
+require 'pulse_meter_core'
 PulseMeter.redis = MockRedis.new
-
-require 'rack/test'
 
 Dir['spec/support/**/*.rb'].each{|f| require File.join(ROOT, f) }
 Dir['spec/shared_examples/**/*.rb'].each{|f| require File.join(ROOT,f)}

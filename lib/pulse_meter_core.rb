@@ -1,17 +1,17 @@
 require "redis"
 require "logger"
-require "pulse-meter/mixins/dumper"
-require "pulse-meter/mixins/utils"
-require "pulse-meter/observer"
-require "pulse-meter/observer/extended"
-require "pulse-meter/sensor"
-require "pulse-meter/sensor/configuration"
+require "pulse_meter/mixins/dumper"
+require "pulse_meter/mixins/utils"
+require "pulse_meter/observer"
+require "pulse_meter/observer/extended"
+require "pulse_meter/sensor"
+require "pulse_meter/sensor/configuration"
 
-require "pulse-meter/command_aggregator/async"
-require "pulse-meter/command_aggregator/sync"
-require "pulse-meter/command_aggregator/udp"
+require "pulse_meter/command_aggregator/async"
+require "pulse_meter/command_aggregator/sync"
+require "pulse_meter/command_aggregator/udp"
 
-require "pulse-meter/udp_server"
+require "pulse_meter/udp_server"
 
 module PulseMeter
   @@redis = nil
