@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'pulse_meter/time_converter'
 
 module PulseMeter
   module Sensor
@@ -18,7 +19,9 @@ module PulseMeter
       #   @return [Fixnum] How long unsummarized raw data will be stored before expiration
       # @!attribute [r] reduce_delay
       #   @return [Fixnum] Delay between end of interval and summarization
-      attr_reader :interval, :ttl, :raw_data_ttl, :reduce_delay
+      # @!attribute [r] timezone
+      #   @return [String] TimeZone to which sensor data is related
+      attr_reader :interval, :ttl, :raw_data_ttl, :reduce_delay, :timezone
 
       # Default values for some sensor parameters
       DEFAULTS = {
@@ -32,11 +35,13 @@ module PulseMeter
       # @option options [Fixnum] :ttl How long summarized data will be stored before expiration
       # @option options [Fixnum] :raw_data_ttl How long unsummarized raw data will be stored before expiration
       # @option options [Fixnum] :reduce_delay Delay between end of interval and summarization
+      # @option options [String] :timezone TimeZone to which sensor data is related
       def initialize(name, options)
         @interval = assert_positive_integer!(options, :interval)
         @ttl = assert_positive_integer!(options, :ttl)
         @raw_data_ttl = assert_positive_integer!(options, :raw_data_ttl, DEFAULTS[:raw_data_ttl])
         @reduce_delay = assert_positive_integer!(options, :reduce_delay, DEFAULTS[:reduce_delay])
+        @timezone = options[:timezone]
         super
       end
 
@@ -54,7 +59,7 @@ module PulseMeter
       # @param value event value
       def event_at(time, value = nil)
         multi do
-          interval_id = get_interval_id(time)
+          interval_id = get_interval_id(time_to_redis(time))
           key = raw_data_key(interval_id)
           aggregate_event(key, value)
           command_aggregator.expire(key, raw_data_ttl)
@@ -82,7 +87,7 @@ module PulseMeter
       # @raise ArgumentError if argumets are not valid time objects
       def timeline_within(from, till, skip_optimization = false)
         raise ArgumentError unless from.kind_of?(Time) && till.kind_of?(Time)
-        start_time, end_time = from.to_i, till.to_i
+        start_time, end_time = time_to_redis(from.to_i), time_to_redis(till.to_i)
         actual_interval = optimized_interval(start_time, end_time, skip_optimization)
         start_interval_id = get_interval_id(start_time) + actual_interval
         ids, values = fetch_reduced_interval_data(start_interval_id, actual_interval, end_time)
@@ -108,7 +113,7 @@ module PulseMeter
       # @raise ArgumentError if argumets are not valid time objects
       def drop_within(from, till)
         raise ArgumentError unless from.kind_of?(Time) && till.kind_of?(Time)
-        start_time, end_time = from.to_i, till.to_i
+        start_time, end_time = time_to_redis(from.to_i), time_to_redis(till.to_i)
         current_interval_id = get_interval_id(start_time) + interval
         keys = []
         while current_interval_id < end_time
@@ -145,7 +150,7 @@ module PulseMeter
       # Returns current interval id
       # @return [Fixnum]
       def current_interval_id
-        get_interval_id(Time.now)
+        get_interval_id(time_to_redis(Time.now))
       end
 
       # @abstract Registeres event for current interval identified by key
@@ -180,7 +185,7 @@ module PulseMeter
 
       def sensor_data(interval_id, value)
         value = deflate(value) unless value.nil?
-        SensorData.new(Time.at(interval_id), value)
+        SensorData.new(Time.at(time_from_redis(interval_id)), value)
       end
 
       # Processes event
@@ -230,6 +235,18 @@ module PulseMeter
           end
         end
         res
+      end
+
+      def time_converter
+        @time_converter ||= PulseMeter::TimeConverter.new(@timezone)
+      end
+
+      def time_to_redis(time)
+        time_converter.to_redis(time)
+      end
+
+      def time_from_redis(time)
+        time_converter.from_redis(time)
       end
     end
   end

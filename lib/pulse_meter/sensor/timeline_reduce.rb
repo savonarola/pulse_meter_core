@@ -30,7 +30,7 @@ module PulseMeter
 
       # Reduces data in all raw intervals
       def reduce_all_raw
-        time = Time.now
+        time = time_to_redis(Time.now)
         min_time = time - reduce_delay  - interval
         max_depth = time - reduce_delay - interval * MAX_INTERVALS
         ids = collect_ids_to_reduce(time, max_depth, min_time)
@@ -42,7 +42,7 @@ module PulseMeter
         while (time > time_from) # go backwards
           time -= interval
           interval_id = get_interval_id(time)
-          next if Time.at(interval_id) > time_to
+          next if interval_id > time_to
 
           reduced_key = data_key(interval_id)
           raw_key = raw_data_key(interval_id)

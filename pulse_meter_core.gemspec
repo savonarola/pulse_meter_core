@@ -17,8 +17,9 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = "0.4.13"
 
-  gem.add_runtime_dependency('redis')
   gem.add_runtime_dependency('json')
+  gem.add_runtime_dependency('redis')
+  gem.add_runtime_dependency('tzinfo')
 
   gem.add_development_dependency('aquarium')
   gem.add_development_dependency('hashie')
