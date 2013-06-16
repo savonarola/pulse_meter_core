@@ -20,7 +20,7 @@ Gem contains core functionality for [pulse-meter](https://github.com/savonarola/
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'pulse-meter'
+gem 'pulse-meter-core'
 ```
 
 And then execute:
@@ -29,7 +29,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install pulse-meter
+    $ gem install pulse-meter-core
 
 ## Contributing
 
