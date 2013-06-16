@@ -1,7 +1,7 @@
-[![Gem Version](https://badge.fury.io/rb/pulse-meter-core.png)](http://badge.fury.io/rb/pulse-meter-core)
-[![Build Status](https://secure.travis-ci.org/savonarola/pulse-meter-core.png)](http://travis-ci.org/savonarola/pulse-meter-core)
-[![Dependency Status](https://gemnasium.com/savonarola/pulse-meter-core.png)](https://gemnasium.com/savonarola/pulse-meter-core)
-[![Code Climate](https://codeclimate.com/github/savonarola/pulse-meter-core.png)](https://codeclimate.com/github/savonarola/pulse-meter-core)
+[![Gem Version](https://badge.fury.io/rb/pulse_meter_core.png)](http://badge.fury.io/rb/pulse_meter_core)
+[![Build Status](https://secure.travis-ci.org/savonarola/pulse_meter_core.png)](http://travis-ci.org/savonarola/pulse_meter_core)
+[![Dependency Status](https://gemnasium.com/savonarola/pulse_meter_core.png)](https://gemnasium.com/savonarola/pulse_meter_core)
+[![Code Climate](https://codeclimate.com/github/savonarola/pulse_meter_core.png)](https://codeclimate.com/github/savonarola/pulse_meter_core)
 
 # PulseMeter
 
@@ -20,7 +20,7 @@ Gem contains core functionality for [pulse-meter](https://github.com/savonarola/
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'pulse-meter-core', require: 'pulse_meter_core'
+gem 'pulse_meter_core'
 ```
 
 And then execute:
@@ -29,7 +29,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install pulse-meter-core
+    $ gem install pulse_meter_core
 
 ## Contributing
 
