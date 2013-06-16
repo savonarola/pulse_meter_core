@@ -15,22 +15,17 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "pulse-meter-core"
   gem.require_paths = ["lib"]
-  gem.version       = "0.4.9"
+  gem.version       = "0.4.10"
 
   gem.add_runtime_dependency('redis')
 
   gem.add_development_dependency('aquarium')
-  gem.add_development_dependency('foreman')
   gem.add_development_dependency('hashie')
-  gem.add_development_dependency('listen')
   gem.add_development_dependency('mock_redis')
-  gem.add_development_dependency('rack-test')
   gem.add_development_dependency('rake')
-  gem.add_development_dependency('rb-fsevent')
   gem.add_development_dependency('redcarpet')
   gem.add_development_dependency('rspec')
   gem.add_development_dependency('simplecov')
-  gem.add_development_dependency('sprockets')
   gem.add_development_dependency('timecop')
   gem.add_development_dependency('yard')
 
