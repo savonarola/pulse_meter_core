@@ -10,7 +10,8 @@ shared_examples_for "timeline sensor" do |extra_init_values, default_event|
   let(:raw_data_ttl){ 3000 }
   let(:interval){ 5 }
   let(:reduce_delay){ 3 }
-  let(:good_init_values){ {:ttl => ttl, :raw_data_ttl => raw_data_ttl, :interval => interval, :reduce_delay => reduce_delay}.merge(extra_init_values || {}) }
+  let(:timezone){'Europe/Moscow'}
+  let(:good_init_values){ {:timezone => timezone, :ttl => ttl, :raw_data_ttl => raw_data_ttl, :interval => interval, :reduce_delay => reduce_delay}.merge(extra_init_values || {}) }
   let!(:sensor){ described_class.new(name, good_init_values) }
   let(:dummy) {Dummy.new}
   let(:base_class){ PulseMeter::Sensor::Base }
@@ -18,16 +19,22 @@ shared_examples_for "timeline sensor" do |extra_init_values, default_event|
   let(:sample_event) {default_event || 123}
 
   before(:each) do
-    @interval_id = (Time.now.to_i / interval) * interval
-    @prev_interval_id = (Time.now.to_i / interval) * interval - interval
+    @now = Time.now
+    tc = PulseMeter::TimeConverter.new(timezone)
+    
+    @redis_now = tc.to_redis(@now).to_i
+
+    @interval_id = (@redis_now / interval) * interval
+    @prev_interval_id = (@redis_now / interval) * interval - interval
 
     @raw_data_key = sensor.raw_data_key(@interval_id)
+  
     @prev_raw_data_key = sensor.raw_data_key(@prev_interval_id)
 
     @next_raw_data_key = sensor.raw_data_key(@interval_id + interval)
 
-    @start_of_interval = Time.at(@interval_id)
-    @start_of_prev_interval = Time.at(@prev_interval_id)
+    @start_of_interval = Time.at(tc.from_redis(@interval_id))
+    @start_of_prev_interval = Time.at(tc.from_redis(@prev_interval_id))
   end
 
   describe "#dump" do
@@ -66,7 +73,7 @@ shared_examples_for "timeline sensor" do |extra_init_values, default_event|
     it "should write data so that it totally expires after :raw_data_ttl" do
       key_count = redis.keys('*').count
       sensor.event(sample_event)
-      Timecop.freeze(Time.now + raw_data_ttl + 1) do
+      Timecop.freeze(@now + raw_data_ttl + 1) do
         redis.keys('*').count.should == key_count
       end
     end
@@ -90,7 +97,7 @@ shared_examples_for "timeline sensor" do |extra_init_values, default_event|
   end
 
   describe "#event_at" do
-    let(:now) {Time.now}
+    let(:now) {@now}
     it "should write events to redis" do
       expect{
           sensor.event_at(now, sample_event)
@@ -230,14 +237,14 @@ shared_examples_for "timeline sensor" do |extra_init_values, default_event|
   describe "#timeline_within" do
     it "should raise exception unless both arguments are Time objects" do
       [:q, nil, -1].each do |bad_value|
-        expect{ sensor.timeline_within(Time.now, bad_value) }.to raise_exception(ArgumentError)
-        expect{ sensor.timeline_within(bad_value, Time.now) }.to raise_exception(ArgumentError)
+        expect{ sensor.timeline_within(@now, bad_value) }.to raise_exception(ArgumentError)
+        expect{ sensor.timeline_within(bad_value, @now) }.to raise_exception(ArgumentError)
       end
     end
 
     it "should return an array of SensorData objects corresponding to stored data for passed interval" do
       sensor.event(sample_event)
-      now = Time.now
+      now = @now
       timeline = sensor.timeline_within(now - 1, now)
       timeline.should be_kind_of(Array)
       timeline.each{|i| i.should be_kind_of(SensorData) }
@@ -306,8 +313,8 @@ shared_examples_for "timeline sensor" do |extra_init_values, default_event|
     end
 
     it "should request timeline within interval from given number of seconds ago till now" do
-      Timecop.freeze do
-        now = Time.now
+      Timecop.freeze(@now) do
+        now = @now
         ago = interval * 100
         sensor.timeline(ago).should == sensor.timeline_within(now - ago, now)
       end
@@ -332,8 +339,8 @@ shared_examples_for "timeline sensor" do |extra_init_values, default_event|
   describe "#drop_within" do
     it "should raise exception unless both arguments are Time objects" do
       [:q, nil, -1].each do |bad_value|
-        expect{ sensor.drop_within(Time.now, bad_value) }.to raise_exception(ArgumentError)
-        expect{ sensor.drop_within(bad_value, Time.now) }.to raise_exception(ArgumentError)
+        expect{ sensor.drop_within(@now, bad_value) }.to raise_exception(ArgumentError)
+        expect{ sensor.drop_within(bad_value, @now) }.to raise_exception(ArgumentError)
       end
     end
 
@@ -399,7 +406,7 @@ shared_examples_for "timeline sensor" do |extra_init_values, default_event|
     def check_sensor_data(sensor, value)
       data = sensor.timeline(2).first
       data.value.should be_generally_equal(sensor.deflate_safe(value))
-      data.start_time.to_i.should == @interval_id
+      data.start_time.to_i.should == @start_of_interval.to_i
     end
 
     it "should contain summarized value stored by data_key for reduced intervals" do
