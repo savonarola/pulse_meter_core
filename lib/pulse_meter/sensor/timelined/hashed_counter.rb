@@ -9,7 +9,6 @@ module PulseMeter
         def aggregate_event(key, data)
           data.each_pair do |k, v|
             command_aggregator.hincrby(key, k, v)
-            command_aggregator.hincrby(key, :total, v)
           end
         end
 
