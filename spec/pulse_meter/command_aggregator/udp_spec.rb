@@ -3,10 +3,10 @@ require 'spec_helper'
 describe PulseMeter::CommandAggregator::UDP do
   let(:host){'127.0.0.1'}
   let(:port){33333}
-  let(:udp_sock){mock(:socket)}
-  before do 
-    UDPSocket.stub!(:new).and_return(udp_sock)
-    udp_sock.stub!(:fcntl).and_return(nil)
+  let(:udp_sock){double(:socket)}
+  before do
+    UDPSocket.stub(:new).and_return(udp_sock)
+    udp_sock.stub(:fcntl).and_return(nil)
     @ca = described_class.new([[host, port]])
   end
 

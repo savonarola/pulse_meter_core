@@ -7,8 +7,8 @@ describe PulseMeter::CommandAggregator::Sync do
   describe "#multi" do
     it "should accumulate redis command and execute in a bulk" do
       ca.multi do
-        ca.set("xxxx", "zzzz").should == "QUEUED"
-        ca.set("yyyy", "zzzz").should == "QUEUED"
+        ca.set("xxxx", "zzzz")
+        ca.set("yyyy", "zzzz")
       end
       redis.get("xxxx").should == "zzzz"
       redis.get("yyyy").should == "zzzz"

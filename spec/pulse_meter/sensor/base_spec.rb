@@ -26,7 +26,7 @@ describe PulseMeter::Sensor::Base do
 
       context 'when passed sensor name is valid' do
         it "should successfully create object" do
-          described_class.new(:foo).should_not be_nil
+          described_class.new("foo_@").should_not be_nil
         end
 
         it "should initialize attributes #redis and #name" do
@@ -91,14 +91,14 @@ describe PulseMeter::Sensor::Base do
   describe "#event" do
     context "when everything is ok" do
       it "should do nothing and return true" do
-        sensor.event(nil).should be_true
+        sensor.event(nil).should be
       end
     end
 
     context "when an error occures while processing event" do
       it "should catch StandardErrors and return false" do
         sensor.stub(:process_event) {raise StandardError}
-        sensor.event(nil).should be_false
+        sensor.event(nil).should_not be
       end
     end
   end

@@ -9,13 +9,13 @@ describe PulseMeter::Sensor::Timelined::MultiPercentile do
   let(:name) {"percentile"}
 
   it "should raise exception when extra parameter is not array of percentiles" do
-    expect {described_class.new(name, init_values.merge({:p => :bad}))}.to raise_exception(ArgumentError) 
+    expect {described_class.new(name, init_values.merge({:p => :bad}))}.to raise_exception(ArgumentError)
   end
 
   it "should raise exception when one of percentiles is not between 0 and 1" do
-    expect {described_class.new(name, init_values.merge({:p => [0.5, -1]}))}.to raise_exception(ArgumentError) 
-    expect {described_class.new(name, init_values.merge({:p => [0.5, 1.1]}))}.to raise_exception(ArgumentError) 
-    expect {described_class.new(name, init_values.merge({:p => [0.5, 0.1]}))}.not_to raise_exception(ArgumentError) 
+    expect {described_class.new(name, init_values.merge({:p => [0.5, -1]}))}.to raise_exception(ArgumentError)
+    expect {described_class.new(name, init_values.merge({:p => [0.5, 1.1]}))}.to raise_exception(ArgumentError)
+    expect {described_class.new(name, init_values.merge({:p => [0.5, 0.1]}))}.not_to raise_exception
   end
 
 end

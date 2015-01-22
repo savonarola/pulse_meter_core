@@ -87,12 +87,12 @@ shared_examples_for "timeline sensor" do |extra_init_values, default_event|
     end
 
     it "returns true if event processed correctly" do
-      sensor.event(sample_event).should be_true
+      sensor.event(sample_event).should be
     end
 
     it "catches StandardErrors and returns false" do
       sensor.stub(:aggregate_event) {raise StandardError}
-      sensor.event(sample_event).should be_false
+      sensor.event(sample_event).should_not be
     end
   end
 

@@ -33,7 +33,7 @@ module PulseMeter
   # Exception to be raised when sensor name is malformed
   class BadSensorName < SensorError
     def initialize(name, options = {})
-      super("Bad sensor name: `#{name}', only a-z letters and _ are allowed")
+      super("Bad sensor name: `#{name}', only a-z letters, @ and _ are allowed")
     end
   end
 

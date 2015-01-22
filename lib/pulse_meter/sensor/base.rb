@@ -21,7 +21,7 @@ module PulseMeter
         if options[:annotation]
           annotate(options[:annotation])
         end
-        raise BadSensorName, @name unless @name =~ /\A\w+\z/
+        raise BadSensorName, @name unless @name =~ /\A[\w@]+\z/
         raise RedisNotInitialized unless PulseMeter.redis
         dump!
       end

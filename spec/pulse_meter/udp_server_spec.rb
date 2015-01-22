@@ -3,9 +3,9 @@ require 'spec_helper'
 describe PulseMeter::UDPServer do
   let(:host){'127.0.0.1'}
   let(:port){33333}
-  let(:udp_sock){mock(:socket)}
+  let(:udp_sock){double(:socket)}
   let(:redis){PulseMeter.redis}
-  before do 
+  before do
     UDPSocket.should_receive(:new).and_return(udp_sock)
     udp_sock.should_receive(:bind).with(host, port).and_return(nil)
     udp_sock.should_receive("do_not_reverse_lookup=").with(true).and_return(nil)

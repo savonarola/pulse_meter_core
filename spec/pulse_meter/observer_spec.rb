@@ -70,7 +70,7 @@ describe PulseMeter::Observer do
 
       it "keeps observed methods' errors" do
         create_observer(:error)
-        lambda {dummy.error}.should raise_error(RuntimeError)
+        lambda {dummy.error}.should raise_error
         sensor.value.should == 1
       end
 
@@ -172,7 +172,7 @@ describe PulseMeter::Observer do
 
       it "keeps observed methods' errors" do
         create_observer(:error)
-        lambda {dummy.error}.should raise_error(RuntimeError)
+        lambda {dummy.error}.should raise_error
         sensor.value.should == 1
       end
 

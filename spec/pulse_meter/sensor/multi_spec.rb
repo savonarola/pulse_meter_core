@@ -129,7 +129,7 @@ describe PulseMeter::Sensor::Multi do
       it "does not yields block" do
         yielded = false
         sensor.sensor_for_factors([:foo], [:bar]){ yielded = true }
-        yielded.should be_false
+        yielded.should_not be
       end
     end
   end
