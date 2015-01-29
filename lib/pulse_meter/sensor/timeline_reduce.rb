@@ -20,7 +20,7 @@ module PulseMeter
         return unless redis.exists(interval_raw_data_key)
         value = summarize(interval_raw_data_key)
         if PulseMeter.debug?
-          PulseMeter.error "reduce #{name} interval_id:#{interval_id}, RAw value: #{redis.get(interval_raw_data_key).inspect}, summarized value: #{value.inspect}"
+          PulseMeter.error "reduce #{name} interval_id:#{interval_id}, summarized value: #{value.inspect}"
         end
         interval_data_key = data_key(interval_id)
         multi do
