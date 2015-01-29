@@ -18,7 +18,11 @@ module PulseMeter
 
   # Returns global Redis client
   def self.redis
-    @@redis 
+    @@redis
+  end
+
+  def self.debug?
+    !!ENV['DEBUG']
   end
 
   # Sets global Redis client
@@ -31,7 +35,7 @@ module PulseMeter
   def self.command_aggregator
     @@command_aggregator ||= PulseMeter::CommandAggregator::Async.instance
   end
-  
+
   # Sets global command_aggregator
   # @param type [Symbol] type of command aggegator (:async or :sync)
   # @raise [ArgumentError] if type is none of :async, :sync

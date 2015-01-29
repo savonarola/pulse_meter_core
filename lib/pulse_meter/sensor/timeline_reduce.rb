@@ -2,11 +2,11 @@ module PulseMeter
   module Sensor
     # Methods for reducing raw data to single values
     module TimelineReduce
-      
+
       def self.included(base)
         base.extend(ClassMethods)
       end
-      
+
       MAX_INTERVALS = 100
 
       # @note Interval id is
@@ -14,11 +14,14 @@ module PulseMeter
       #   of 'compressing' all interval's raw data to a single value.
       #   When reduction is done summarized data is saved to Redis
       #   separately with expiration time taken from sensor configuration.
-      # @param interval_id [Fixnum] 
+      # @param interval_id [Fixnum]
       def reduce(interval_id)
         interval_raw_data_key = raw_data_key(interval_id)
         return unless redis.exists(interval_raw_data_key)
         value = summarize(interval_raw_data_key)
+        if PulseMeter.debug?
+          PulseMeter.error "reduce #{name} interval_id:#{interval_id}, RAw value: #{redis.get(interval_raw_data_key).inspect}, summarized value: #{value.inspect}"
+        end
         interval_data_key = data_key(interval_id)
         multi do
           redis.del(interval_raw_data_key)
@@ -30,6 +33,9 @@ module PulseMeter
 
       # Reduces data in all raw intervals
       def reduce_all_raw
+        if PulseMeter.debug?
+          PulseMeter.error "reduce_all_raw #{name}"
+        end
         time = time_to_redis(Time.now)
         min_time = time - reduce_delay  - interval
         max_depth = time - reduce_delay - interval * MAX_INTERVALS
@@ -48,6 +54,9 @@ module PulseMeter
           raw_key = raw_data_key(interval_id)
           break if redis.exists(reduced_key)
           ids << interval_id
+        end
+        if PulseMeter.debug?
+          PulseMeter.error "collect_ids_to_reduce for #{name}: #{ids.inspect}"
         end
         ids
       end
