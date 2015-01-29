@@ -43,7 +43,7 @@ describe PulseMeter::Sensor::Timeline do
       it "should not raise exception if #{value.inspect} is not defined" do
         values = good_init_values
         values.delete(value)
-        expect {described_class.new(name, good_init_values)}.not_to raise_exception(ArgumentError)
+        expect {described_class.new(name, good_init_values)}.not_to raise_error
       end
 
       it "should assign default value to #{value.inspect} if it is not defined" do

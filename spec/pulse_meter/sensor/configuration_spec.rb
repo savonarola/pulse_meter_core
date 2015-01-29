@@ -16,9 +16,9 @@ describe PulseMeter::Sensor::Configuration do
     let(:cfg) {described_class.new}
 
     it "should create sensor available under passed name" do
-      cfg.has_sensor?(:foo).should be_false
+      cfg.has_sensor?(:foo).should_not be
       cfg.add_sensor(:foo, sensor_type: 'counter')
-      cfg.has_sensor?(:foo).should_not be_true
+      cfg.has_sensor?(:foo).should_not be
     end
 
     it "should have event shortcut for the sensor" do

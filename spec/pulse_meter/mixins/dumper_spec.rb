@@ -54,7 +54,7 @@ describe PulseMeter::Mixins::Dumper do
 
     context "when class follows dump contract" do
       it "should not raise dump exception" do
-        expect {good_obj.dump!}.not_to raise_exception(PulseMeter::DumpError)
+        expect {good_obj.dump!}.not_to raise_exception
       end
 
       it "should save dump to redis" do
