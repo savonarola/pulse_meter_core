@@ -14,7 +14,7 @@ module PulseMeter
 
         def summarize(key)
           if PulseMeter.debug?
-            PulseMeter.error "summarize key #{key}, raw value: #{redis.hgetall(key).inspecT}"
+            PulseMeter.error "summarize key #{key}, raw value: #{redis.hgetall(key).inspect}"
           end
           redis.
             hgetall(key).
