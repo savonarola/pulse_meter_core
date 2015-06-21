@@ -15,43 +15,43 @@ describe PulseMeter::Sensor::Configuration do
   describe "#add_sensor" do
     let(:cfg) {described_class.new}
 
-    it "should create sensor available under passed name" do
-      cfg.has_sensor?(:foo).should_not be
+    it "creates sensor available under passed name" do
+      expect(cfg.has_sensor?(:foo)).not_to be
       cfg.add_sensor(:foo, sensor_type: 'counter')
-      cfg.has_sensor?(:foo).should_not be
+      expect(cfg.has_sensor?(:foo)).not_to be
     end
 
-    it "should have event shortcut for the sensor" do
+    it "has event shortcut for the sensor" do
       cfg.add_sensor(:foo, sensor_type: 'counter')
       puts cfg.to_yaml
-      cfg.sensor(:foo){|s| s.should_receive(:event).with(321)}
+      cfg.sensor(:foo){|s| expect(s).to receive(:event).with(321)}
       cfg.foo(321)
     end
-    
-    it "should have event_at shortcut for the sensor" do
+
+    it "has event_at shortcut for the sensor" do
       cfg.add_sensor(:foo, sensor_type: 'counter')
       now = Time.now
       cfg.sensor(:foo) do |sensor|
-        sensor.should_receive(:event_at).with(now, 321)
+        expect(sensor).to receive(:event_at).with(now, 321)
       end
       cfg.foo_at(now, 321)
     end
 
-    it "should create sensor with correct type" do
+    it "creates sensor with correct type" do
       cfg.add_sensor(:foo, sensor_type: 'counter')
-      cfg.sensor(:foo){|s| s.should be_kind_of(PulseMeter::Sensor::Counter)}
+      cfg.sensor(:foo){|s| expect(s).to be_kind_of(PulseMeter::Sensor::Counter)}
     end
 
-    it "should not raise exception if sensor type is bad" do
+    it "does not raise exception if sensor type is bad" do
       expect{ cfg.add_sensor(:foo, sensor_type: 'baaaar') }.not_to raise_exception
     end
 
-    it "should pass args to created sensor" do
+    it "passes args to created sensor" do
       cfg.add_sensor(:foo, sensor_type: 'counter', args: {annotation: "My Foo Counter"} )
-      cfg.sensor(:foo){|s| s.annotation.should == "My Foo Counter" }
+      cfg.sensor(:foo){|s| expect(s.annotation).to eq("My Foo Counter") }
     end
 
-    it "should accept hashie-objects" do
+    it "accepts hashie-objects" do
       class Dummy
         def sensor_type
           'counter'
@@ -62,12 +62,12 @@ describe PulseMeter::Sensor::Configuration do
       end
 
       cfg.add_sensor(:foo, Dummy.new)
-      cfg.sensor(:foo){|s| s.annotation.should == "My Foo Counter"}
+      cfg.sensor(:foo){|s| expect(s.annotation).to eq("My Foo Counter")}
     end
   end
 
   describe ".new" do
-    it "should add passed sensor setting hash using keys as names" do
+    it "adds passed sensor setting hash using keys as names" do
       opts = {
         cnt: {
           sensor_type: 'counter'
@@ -79,15 +79,15 @@ describe PulseMeter::Sensor::Configuration do
       cfg1 = described_class.new(opts)
       cfg2 = described_class.new
       opts.each{|k,v| cfg2.add_sensor(k, v)}
-      cfg1.sensors.to_yaml.should == cfg2.sensors.to_yaml
+      expect(cfg1.sensors.to_yaml).to eq(cfg2.sensors.to_yaml)
     end
   end
 
   describe "#sensor" do
-    it "should give access to added sensors via block" do
+    it "gives access to added sensors via block" do
       cfg = described_class.new(counter_config)
-      cfg.sensor(:cnt){ |s| s.annotation.should == "MySensor" }
-      cfg.sensor("cnt"){ |s| s.annotation.should == "MySensor" }
+      cfg.sensor(:cnt){ |s| expect(s.annotation).to eq("MySensor") }
+      cfg.sensor("cnt"){ |s| expect(s.annotation).to eq("MySensor") }
     end
   end
 
@@ -97,7 +97,7 @@ describe PulseMeter::Sensor::Configuration do
       sensors = {}
       cfg.each {|s| sensors[s.name.to_sym] = s}
       sensor = cfg.sensor(:cnt){|s| s}
-      sensors.should == {:cnt => sensor}
+      expect(sensors).to eq({:cnt => sensor})
     end
   end
 end

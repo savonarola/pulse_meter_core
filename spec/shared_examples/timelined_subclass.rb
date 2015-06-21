@@ -8,7 +8,7 @@ shared_examples_for "timelined subclass" do |events, result, extra_options|
   let(:sensor){ described_class.new(name, init_values) }
   let(:epsilon) {1}
 
-  it "should calculate summarized value #{result.inspect} of #{events.inspect}" do
+  it "calculates summarized value #{result.inspect} of #{events.inspect}" do
     interval_id = 0
     start_of_interval = Time.at(interval_id)
     Timecop.freeze(start_of_interval) do
@@ -16,7 +16,7 @@ shared_examples_for "timelined subclass" do |events, result, extra_options|
     end
     Timecop.freeze(start_of_interval + interval) do
       data = sensor.timeline(interval + epsilon).first
-      data.value.should be_generally_equal(sensor.deflate_safe(result))
+      expect(data.value).to be_generally_equal(sensor.deflate_safe(result))
     end
   end
 

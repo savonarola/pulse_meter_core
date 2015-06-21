@@ -5,20 +5,20 @@ describe PulseMeter::CommandAggregator::Sync do
   let(:redis){PulseMeter.redis}
 
   describe "#multi" do
-    it "should accumulate redis command and execute in a bulk" do
+    it "accumulates redis command and execute in a bulk" do
       ca.multi do
         ca.set("xxxx", "zzzz")
         ca.set("yyyy", "zzzz")
       end
-      redis.get("xxxx").should == "zzzz"
-      redis.get("yyyy").should == "zzzz"
+      expect(redis.get("xxxx")).to eq("zzzz")
+      expect(redis.get("yyyy")).to eq("zzzz")
     end
   end
 
   describe "any other redis instance method" do
-    it "should be delegated to redis" do
+    it "is delegated to redis" do
       ca.set("xxxx", "zzzz")
-      redis.get("xxxx").should == "zzzz"
+      expect(redis.get("xxxx")).to eq("zzzz")
     end
   end
 end

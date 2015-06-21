@@ -5,26 +5,26 @@ describe PulseMeter::CommandAggregator::UDP do
   let(:port){33333}
   let(:udp_sock){double(:socket)}
   before do
-    UDPSocket.stub(:new).and_return(udp_sock)
-    udp_sock.stub(:fcntl).and_return(nil)
+    allow(UDPSocket).to receive(:new).and_return(udp_sock)
+    allow(udp_sock).to receive(:fcntl).and_return(nil)
     @ca = described_class.new([[host, port]])
   end
 
   describe "#multi" do
-    it "should accumulate redis commands and send them in a bulk" do
+    it "accumulates redis commands and send them in a bulk" do
       data = [
         ["set", "xxxx", "zzzz"],
         ["set", "yyyy", "zzzz"]
       ].to_json
-      udp_sock.should_receive(:send).with(data, 0, host, port).and_return(0)
+      expect(udp_sock).to receive(:send).with(data, 0, host, port).and_return(0)
       @ca.multi do
         @ca.set("xxxx", "zzzz")
         @ca.set("yyyy", "zzzz")
       end
     end
 
-    it "should ignore standard exceptions" do
-      udp_sock.should_receive(:send).and_raise(StandardError)
+    it "ignores standard exceptions" do
+      expect(udp_sock).to receive(:send).and_raise(StandardError)
       @ca.multi do
         @ca.set("xxxx", "zzzz")
       end
@@ -32,11 +32,11 @@ describe PulseMeter::CommandAggregator::UDP do
   end
 
   describe "any other redis instance method" do
-    it "should send data imediately" do
+    it "sends data imediately" do
       data = [
         ["set", "xxxx", "zzzz"]
       ].to_json
-      udp_sock.should_receive(:send).with(data, 0, host, port).and_return(0)
+      expect(udp_sock).to receive(:send).with(data, 0, host, port).and_return(0)
       @ca.set("xxxx", "zzzz")
     end
   end

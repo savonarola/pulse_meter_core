@@ -23,13 +23,13 @@ describe PulseMeter::Observer do
       it "executes block in context of sensor each time specified method of given class called" do
         create_observer
         5.times {dummy.incr}
-        sensor.value.should == 5
+        expect(sensor.value).to eq(5)
       end
       
       it "passes arguments to observed method" do
         create_observer
         5.times {dummy.incr(10)}
-        dummy.count.should == 50
+        expect(dummy.count).to eq(50)
       end
 
       it "passes methods' params to block" do
@@ -38,7 +38,7 @@ describe PulseMeter::Observer do
         end
 
         5.times {dummy.incr(10)}
-        sensor.value.should == 50
+        expect(sensor.value).to eq(50)
       end
 
       it "passes execution time in milliseconds to block" do
@@ -48,7 +48,7 @@ describe PulseMeter::Observer do
           end
 
           dummy.incr
-          sensor.value.should >= 1000
+          expect(sensor.value).to be >= 1000
         end
       end
 
@@ -57,26 +57,26 @@ describe PulseMeter::Observer do
           raise RuntimeError
         end
 
-        lambda {dummy.incr}.should_not raise_error
-        dummy.count.should == 1
+        expect {dummy.incr}.not_to raise_error
+        expect(dummy.count).to eq(1)
       end
 
       it "uses first observer in case of double observation" do
         create_observer(:incr, 1)
         create_observer(:incr, 2)
         5.times {dummy.incr}
-        sensor.value.should == 5
+        expect(sensor.value).to eq(5)
       end
 
       it "keeps observed methods' errors" do
         create_observer(:error)
-        lambda {dummy.error}.should raise_error
-        sensor.value.should == 1
+        expect {dummy.error}.to raise_error
+        expect(sensor.value).to eq(1)
       end
 
       it "makes observed method return its value" do
         create_observer
-        dummy.incr.should == 1
+        expect(dummy.incr).to eq(1)
       end
 
       it "allows to pass blocks to observed method" do
@@ -84,13 +84,13 @@ describe PulseMeter::Observer do
         dummy.incr do
           2
         end
-        dummy.count.should == 3
+        expect(dummy.count).to eq(3)
       end
     end
 
     describe ".unobserve_method" do
       it "does nothing unless method is observed" do
-        lambda {remove_observer}.should_not raise_error
+        expect {remove_observer}.not_to raise_error
       end
 
       it "removes observation from observed method" do
@@ -98,7 +98,7 @@ describe PulseMeter::Observer do
         dummy.incr
         remove_observer
         dummy.incr
-        sensor.value.should == 1
+        expect(sensor.value).to eq(1)
       end
     end
   end
@@ -125,13 +125,13 @@ describe PulseMeter::Observer do
       it "executes block in context of sensor each time specified method of given class called" do
         create_observer
         5.times {dummy.incr}
-        sensor.value.should == 5
+        expect(sensor.value).to eq(5)
       end
       
       it "passes arguments to observed method" do
         create_observer
         5.times {dummy.incr(10)}
-        dummy.count.should == 50
+        expect(dummy.count).to eq(50)
       end
 
       it "passes methods' params to block" do
@@ -140,7 +140,7 @@ describe PulseMeter::Observer do
         end
 
         5.times {dummy.incr(10)}
-        sensor.value.should == 50
+        expect(sensor.value).to eq(50)
       end
 
       it "passes execution time in milliseconds to block" do
@@ -150,7 +150,7 @@ describe PulseMeter::Observer do
           end
 
           dummy.incr
-          sensor.value.should == 1000
+          expect(sensor.value).to eq(1000)
         end
       end
 
@@ -159,26 +159,26 @@ describe PulseMeter::Observer do
           raise RuntimeError
         end
 
-        lambda {dummy.incr}.should_not raise_error
-        dummy.count.should == 1
+        expect {dummy.incr}.not_to raise_error
+        expect(dummy.count).to eq(1)
       end
 
       it "uses first observer in case of double observation" do
         create_observer(:incr, 1)
         create_observer(:incr, 2)
         5.times {dummy.incr}
-        sensor.value.should == 5
+        expect(sensor.value).to eq(5)
       end
 
       it "keeps observed methods' errors" do
         create_observer(:error)
-        lambda {dummy.error}.should raise_error
-        sensor.value.should == 1
+        expect {dummy.error}.to raise_error
+        expect(sensor.value).to eq(1)
       end
 
       it "makes observed method return its value" do
         create_observer
-        dummy.incr.should == 1
+        expect(dummy.incr).to eq(1)
       end
 
       it "allows to pass blocks to observed method" do
@@ -186,13 +186,13 @@ describe PulseMeter::Observer do
         dummy.incr do
           2
         end
-        dummy.count.should == 3
+        expect(dummy.count).to eq(3)
       end
     end
 
     describe ".unobserve_class_method" do
       it "does nothing unless method is observed" do
-        lambda {remove_observer}.should_not raise_error
+        expect {remove_observer}.not_to raise_error
       end
 
       it "removes observation from observed method" do
@@ -200,7 +200,7 @@ describe PulseMeter::Observer do
         dummy.incr
         remove_observer
         dummy.incr
-        sensor.value.should == 1
+        expect(sensor.value).to eq(1)
       end
     end
   end

@@ -6,9 +6,9 @@ describe PulseMeter::UDPServer do
   let(:udp_sock){double(:socket)}
   let(:redis){PulseMeter.redis}
   before do
-    UDPSocket.should_receive(:new).and_return(udp_sock)
-    udp_sock.should_receive(:bind).with(host, port).and_return(nil)
-    udp_sock.should_receive("do_not_reverse_lookup=").with(true).and_return(nil)
+    expect(UDPSocket).to receive(:new).and_return(udp_sock)
+    expect(udp_sock).to receive(:bind).with(host, port).and_return(nil)
+    expect(udp_sock).to receive("do_not_reverse_lookup=").with(true).and_return(nil)
     @server = described_class.new(host, port)
   end
 
@@ -19,15 +19,15 @@ describe PulseMeter::UDPServer do
         ["set", "yyyy", "zzzz"]
       ].to_json
     }
-    it "should process proper incoming commands" do
-      udp_sock.should_receive(:recvfrom).with(described_class::MAX_PACKET).and_return(data)
+    it "processes proper incoming commands" do
+      expect(udp_sock).to receive(:recvfrom).with(described_class::MAX_PACKET).and_return(data)
       @server.start(1)
-      redis.get("xxxx").should == "zzzz"
-      redis.get("yyyy").should == "zzzz"
+      expect(redis.get("xxxx")).to eq("zzzz")
+      expect(redis.get("yyyy")).to eq("zzzz")
     end
 
-    it "should suppress JSON errors" do
-      udp_sock.should_receive(:recvfrom).with(described_class::MAX_PACKET).and_return("xxx")
+    it "suppresses JSON errors" do
+      expect(udp_sock).to receive(:recvfrom).with(described_class::MAX_PACKET).and_return("xxx")
       expect{ @server.start(1) }.not_to raise_exception
     end
   end

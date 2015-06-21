@@ -19,11 +19,11 @@ describe PulseMeter::Observer::Extended do
 
           dummy.incr(40)
 
-          parameters[:self].should == dummy
-          parameters[:delta].should >= 1000
-          parameters[:result].should == 40
-          parameters[:exception].should be_nil
-          parameters[:args].should == [40]
+          expect(parameters[:self]).to eq(dummy)
+          expect(parameters[:delta]).to be >= 1000
+          expect(parameters[:result]).to eq(40)
+          expect(parameters[:exception]).to be_nil
+          expect(parameters[:args]).to eq([40])
         end
       end
 
@@ -35,12 +35,12 @@ describe PulseMeter::Observer::Extended do
             parameters = params
           end
 
-          lambda { dummy.error }.should raise_error(RuntimeError)
+          expect { dummy.error }.to raise_error(RuntimeError)
 
-          parameters[:self].should == dummy
-          parameters[:result].should == nil
-          parameters[:exception].class.should == RuntimeError
-          parameters[:args].should == []
+          expect(parameters[:self]).to eq(dummy)
+          expect(parameters[:result]).to eq(nil)
+          expect(parameters[:exception].class).to eq(RuntimeError)
+          expect(parameters[:args]).to eq([])
         end
       end
     end
@@ -63,11 +63,11 @@ describe PulseMeter::Observer::Extended do
   
           ObservedDummy.incr(40)
 
-          parameters[:self].should == ObservedDummy
-          parameters[:delta].should >= 1000
-          parameters[:result].should == 40
-          parameters[:exception].should be_nil
-          parameters[:args].should == [40]
+          expect(parameters[:self]).to eq(ObservedDummy)
+          expect(parameters[:delta]).to be >= 1000
+          expect(parameters[:result]).to eq(40)
+          expect(parameters[:exception]).to be_nil
+          expect(parameters[:args]).to eq([40])
         end
       end
 
@@ -79,12 +79,12 @@ describe PulseMeter::Observer::Extended do
             parameters = params
           end
   
-          lambda { ObservedDummy.error }.should raise_error(RuntimeError)
+          expect { ObservedDummy.error }.to raise_error(RuntimeError)
 
-          parameters[:self].should == ObservedDummy
-          parameters[:result].should == nil
-          parameters[:exception].class.should == RuntimeError
-          parameters[:args].should == []
+          expect(parameters[:self]).to eq(ObservedDummy)
+          expect(parameters[:result]).to eq(nil)
+          expect(parameters[:exception].class).to eq(RuntimeError)
+          expect(parameters[:args]).to eq([])
         end
       end
     end

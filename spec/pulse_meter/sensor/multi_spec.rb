@@ -34,19 +34,19 @@ describe PulseMeter::Sensor::Multi do
 
   describe "#factors" do
     it "returns factors passed to constructor" do
-      sensor.factors.should == factors
+      expect(sensor.factors).to eq(factors)
     end
   end
 
   describe "#configuration_options" do
     it "returns configuration option passed to constructor" do
-      sensor.configuration_options.should == configuration
+      expect(sensor.configuration_options).to eq(configuration)
     end
   end
 
   describe "#sensors" do
     it "returns PulseMeter::Sensor::Configuration instance" do
-      sensor.sensors.should be_instance_of(PulseMeter::Sensor::Configuration)
+      expect(sensor.sensors).to be_instance_of(PulseMeter::Sensor::Configuration)
     end
   end
 
@@ -67,19 +67,19 @@ describe PulseMeter::Sensor::Multi do
       it "assigns names based on factors' names and values" do
         sensor.event(factor_values, 1)
         names = sensor.sensors.to_a.map(&:name)
-        names.sort.should == [
+        expect(names.sort).to eq([
           "#{name}",
           "#{name}_f1_v1",
           "#{name}_f2_v2",
           "#{name}_f1_v1_f2_v2"
-        ].sort
+        ].sort)
       end
 
       it "creates sensors of given type with configuration options passed" do
         sensor.event(factor_values, 1)
         sensor.sensors.each do |s|
-          s.should be_instance_of(PulseMeter::Sensor::Counter)
-          s.annotation.should == annotation
+          expect(s).to be_instance_of(PulseMeter::Sensor::Counter)
+          expect(s.annotation).to eq(annotation)
         end
       end
     end
@@ -96,7 +96,7 @@ describe PulseMeter::Sensor::Multi do
         ["#{name}_f1_f1v2_f2_f2v1", 2]
       ].each do |sensor_name, sum|
         sensor.sensor(sensor_name) { |s|
-          s.value.should == sum
+          expect(s.value).to eq(sum)
         }
       end
     end
@@ -107,12 +107,12 @@ describe PulseMeter::Sensor::Multi do
       sensor.event({f1: :f1v1, f2: :f2v1}, 1)
       restored_sensor = PulseMeter::Sensor::Base.restore(name)
 
-      restored_sensor.to_a.map(&:name).sort.should == [
+      expect(restored_sensor.to_a.map(&:name).sort).to eq([
         "#{name}",
         "#{name}_f1_f1v1",
         "#{name}_f2_f2v1",
         "#{name}_f1_f1v1_f2_f2v1",
-      ].sort
+      ].sort)
     end
   end
 
@@ -120,8 +120,8 @@ describe PulseMeter::Sensor::Multi do
     context "when sensor has already been created" do
       it "yields block with sensor for given combination of factors and their values" do
         sensor.event({f1: :f1v1, f2: :f2v1}, 1)
-        sensor.sensor_for_factors([:f1, :f2], [:f1v1, :f2v1]){|s| s.name.should == "#{name}_f1_f1v1_f2_f2v1"}
-        sensor.sensor_for_factors([:f1], [:f1v1]){|s| s.name.should == "#{name}_f1_f1v1"}
+        sensor.sensor_for_factors([:f1, :f2], [:f1v1, :f2v1]){|s| expect(s.name).to eq("#{name}_f1_f1v1_f2_f2v1")}
+        sensor.sensor_for_factors([:f1], [:f1v1]){|s| expect(s.name).to eq("#{name}_f1_f1v1")}
       end
     end
 
@@ -129,7 +129,7 @@ describe PulseMeter::Sensor::Multi do
       it "does not yields block" do
         yielded = false
         sensor.sensor_for_factors([:foo], [:bar]){ yielded = true }
-        yielded.should_not be
+        expect(yielded).not_to be
       end
     end
   end

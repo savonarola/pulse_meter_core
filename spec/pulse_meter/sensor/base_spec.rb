@@ -8,7 +8,7 @@ describe PulseMeter::Sensor::Base do
 
   describe '#initialize' do
     context 'when PulseMeter.redis is not initialized' do
-      it "should raise RedisNotInitialized exception" do
+      it "raises RedisNotInitialized exception" do
         PulseMeter.redis = nil
         expect{ described_class.new(:foo) }.to raise_exception(PulseMeter::RedisNotInitialized)
       end
@@ -17,7 +17,7 @@ describe PulseMeter::Sensor::Base do
     context 'when PulseMeter.redis is initialized' do
 
       context 'when passed sensor name is bad' do
-        it "should raise BadSensorName exception" do
+        it "raises BadSensorName exception" do
           ['name with whitespace', 'name|with|bad|characters'].each do |bad_name|
             expect{ described_class.new(bad_name) }.to raise_exception(PulseMeter::BadSensorName)
           end
@@ -25,24 +25,24 @@ describe PulseMeter::Sensor::Base do
       end
 
       context 'when passed sensor name is valid' do
-        it "should successfully create object" do
-          described_class.new("foo_@").should_not be_nil
+        it "successfully creates object" do
+          expect(described_class.new("foo_@")).not_to be_nil
         end
 
-        it "should initialize attributes #redis and #name" do
+        it "initializes attributes #redis and #name" do
           sensor = described_class.new(:foo)
-          sensor.name.should == 'foo'
-          sensor.redis.should == PulseMeter.redis
+          expect(sensor.name).to eq('foo')
+          expect(sensor.redis).to eq(PulseMeter.redis)
         end
 
-        it "should save dump to redis automatically to let the object be restored by name" do
-          described_class.restore(name).should be_instance_of(described_class)
+        it "saves dump to redis automatically to let the object be restored by name" do
+          expect(described_class.restore(name)).to be_instance_of(described_class)
         end
 
-        it "should annotate object if annotation given" do
+        it "annotates object if annotation given" do
           described_class.new(:foo, :annotation => "annotation")
           sensor = described_class.restore(:foo)
-          sensor.annotation.should == "annotation"
+          expect(sensor.annotation).to eq("annotation")
         end
       end
     end
@@ -50,7 +50,7 @@ describe PulseMeter::Sensor::Base do
 
   describe '#annotate' do
 
-    it "should store sensor annotation in redis" do
+    it "stores sensor annotation in redis" do
       expect {sensor.annotate(description)}.to change{redis.keys('*').count}.by(1)
     end
 
@@ -58,47 +58,47 @@ describe PulseMeter::Sensor::Base do
 
   describe '#annotation' do
     context "when sensor was annotated" do
-      it "should return stored annotation" do
+      it "returns stored annotation" do
         sensor.annotate(description)
-        sensor.annotation.should == description
+        expect(sensor.annotation).to eq(description)
       end
     end
 
     context "when sensor was not annotated" do
-      it "should return nil" do
-        sensor.annotation.should be_nil
+      it "returns nil" do
+        expect(sensor.annotation).to be_nil
       end
     end
 
     context "after sensor data was cleaned" do
-      it "should return nil" do
+      it "returns nil" do
         sensor.annotate(description)
         sensor.cleanup
-        sensor.annotation.should be_nil
+        expect(sensor.annotation).to be_nil
       end
     end
   end
 
   describe "#cleanup" do
-    it "should remove from redis all sensor data" do
+    it "removes from redis all sensor data" do
       sensor.event(123)
       sensor.annotate(description)
       sensor.cleanup
-      redis.keys('*').should be_empty
+      expect(redis.keys('*')).to be_empty
     end
   end
 
   describe "#event" do
     context "when everything is ok" do
-      it "should do nothing and return true" do
-        sensor.event(nil).should be
+      it "does nothing and return true" do
+        expect(sensor.event(nil)).to be
       end
     end
 
     context "when an error occures while processing event" do
-      it "should catch StandardErrors and return false" do
-        sensor.stub(:process_event) {raise StandardError}
-        sensor.event(nil).should_not be
+      it "catches StandardErrors and return false" do
+        allow(sensor).to receive(:process_event) {raise StandardError}
+        expect(sensor.event(nil)).not_to be
       end
     end
   end

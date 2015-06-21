@@ -8,7 +8,7 @@ describe PulseMeter::Sensor::Timelined::Percentile do
   let(:init_values) {{:ttl => 1, :raw_data_ttl => 1, :interval => 1, :reduce_delay => 1}}
   let(:name) {"percentile"}
 
-  it "should raise exception when percentile is not between 0 and 1" do
+  it "raises exception when percentile is not between 0 and 1" do
     expect {described_class.new(name, init_values.merge({:p => -1}))}.to raise_exception(ArgumentError)
     expect {described_class.new(name, init_values.merge({:p => 1.1}))}.to raise_exception(ArgumentError)
     expect {described_class.new(name, init_values.merge({:p => 0.1}))}.not_to raise_exception
