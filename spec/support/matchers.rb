@@ -18,11 +18,11 @@ module Matchers
       end
     end
 
-    def failure_message_for_should
+    def failure_message
       "expected #{@actual.inspect} to be generally equal to #{@expected.inspect}"
     end
 
-    def failure_message_for_should_not
+    def failure_message_when_negated
       "expected #{@actual.inspect} not to be generally equal to #{@expected.inspect}"
     end
   end

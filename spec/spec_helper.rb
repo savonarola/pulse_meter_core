@@ -36,3 +36,5 @@ RSpec.configure do |config|
   config.include(Matchers)
 end
 
+RSpec::Expectations.configuration.warn_about_potential_false_positives = false
+
