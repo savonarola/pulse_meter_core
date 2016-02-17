@@ -9,7 +9,7 @@ PulseMeter is a gem for fast and convenient realtime aggregating of software int
 
 ## Live Demo
 
-A small live demo of [pulse-meter](https://github.com/savonarola/pulse-meter) gem is located here: [rubybox.ru](http://rubybox.ru), its source code can be found here: [https://github.com/savonarola/pulse-meter-demo](https://github.com/savonarola/pulse-meter-demo)
+A small live demo of [pulse-meter](https://github.com/savonarola/pulse-meter) gem is located here: [pulse-meter.rubybox.ru](https://pulse-meter.rubybox.ru), its source code can be found here: [https://github.com/savonarola/pulse-meter-demo](https://github.com/savonarola/pulse-meter-demo)
 
 ## Features
 
