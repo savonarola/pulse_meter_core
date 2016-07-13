@@ -25,7 +25,7 @@ describe PulseMeter::Observer do
         5.times {dummy.incr}
         expect(sensor.value).to eq(5)
       end
-      
+
       it "passes arguments to observed method" do
         create_observer
         5.times {dummy.incr(10)}
@@ -86,6 +86,43 @@ describe PulseMeter::Observer do
         end
         expect(dummy.count).to eq(3)
       end
+
+      context "works independently on inherited classes with" do
+        let!(:parent_sensor) {PulseMeter::Sensor::Counter.new(:parent)}
+        let!(:child_sensor) {PulseMeter::Sensor::Counter.new(:child)}
+
+        before do
+          [:instance_method, :instance_method_i, :only_parent_method, :only_parent_method_i].each do |method|
+            described_class.observe_method(ParentDummy, method, parent_sensor) {|*args| incr}
+            described_class.observe_method(ChildDummy, method, child_sensor) {|*args| incr}
+          end
+        end
+
+        after do
+          expect(parent_sensor.value).to eq(1)
+          expect(child_sensor.value).to eq(1)
+        end
+
+        it "redefined methods" do
+          expect(ParentDummy.new.instance_method).to eq('parent#instance')
+          expect(ChildDummy.new.instance_method).to eq('child#instance')
+        end
+
+        it "redefined methods, inverse order" do
+          expect(ChildDummy.new.instance_method_i).to eq('child#instance_i')
+          expect(ParentDummy.new.instance_method_i).to eq('parent#instance_i')
+        end
+
+        it "inherited methods" do
+          expect(ParentDummy.new.only_parent_method).to eq('parent#only_parent')
+          expect(ChildDummy.new.only_parent_method).to eq('parent#only_parent')
+        end
+
+        it "inherited methods, inverse order" do
+          expect(ChildDummy.new.only_parent_method_i).to eq('parent#only_parent_i')
+          expect(ParentDummy.new.only_parent_method_i).to eq('parent#only_parent_i')
+        end
+      end
     end
 
     describe ".unobserve_method" do
@@ -99,6 +136,28 @@ describe PulseMeter::Observer do
         remove_observer
         dummy.incr
         expect(sensor.value).to eq(1)
+      end
+
+      context "works independently on inherited classes with" do
+        before do
+          [:instance_method, :only_parent_method].each do |method|
+            described_class.observe_method(ParentDummy, method, sensor)
+            described_class.observe_method(ChildDummy, method, sensor)
+
+            described_class.unobserve_method(ParentDummy, method)
+            described_class.unobserve_method(ChildDummy, method)
+          end
+        end
+
+        it "redefined methods" do
+          expect(ParentDummy.new.instance_method).to eq('parent#instance')
+          expect(ChildDummy.new.instance_method).to eq('child#instance')
+        end
+
+        it "inherited methods" do
+          expect(ParentDummy.new.only_parent_method).to eq('parent#only_parent')
+          expect(ChildDummy.new.only_parent_method).to eq('parent#only_parent')
+        end
       end
     end
   end
@@ -127,7 +186,7 @@ describe PulseMeter::Observer do
         5.times {dummy.incr}
         expect(sensor.value).to eq(5)
       end
-      
+
       it "passes arguments to observed method" do
         create_observer
         5.times {dummy.incr(10)}
@@ -188,6 +247,43 @@ describe PulseMeter::Observer do
         end
         expect(dummy.count).to eq(3)
       end
+
+      context "works independently on inherited classes with" do
+        let!(:parent_sensor) {PulseMeter::Sensor::Counter.new(:parent)}
+        let!(:child_sensor) {PulseMeter::Sensor::Counter.new(:child)}
+
+        before do
+          [:class_method, :class_method_i, :only_parent_class_method, :only_parent_class_method_i].each do |method|
+            described_class.observe_class_method(ParentDummy, method, parent_sensor) {|*args| incr}
+            described_class.observe_class_method(ChildDummy, method, child_sensor) {|*args| incr}
+          end
+        end
+
+        after do
+          expect(parent_sensor.value).to eq(1)
+          expect(child_sensor.value).to eq(1)
+        end
+
+        it "redefined methods" do
+          expect(ParentDummy.class_method).to eq('parent.class')
+          expect(ChildDummy.class_method).to eq('child.class')
+        end
+
+        it "redefined methods, inverse order" do
+          expect(ChildDummy.class_method_i).to eq('child.class_i')
+          expect(ParentDummy.class_method_i).to eq('parent.class_i')
+        end
+
+        it "inherited methods" do
+          expect(ParentDummy.only_parent_class_method).to eq('parent.class')
+          expect(ChildDummy.only_parent_class_method).to eq('parent.class')
+        end
+
+        it "inherited methods, inverse order" do
+          expect(ChildDummy.only_parent_class_method_i).to eq('parent.class_i')
+          expect(ParentDummy.only_parent_class_method_i).to eq('parent.class_i')
+        end
+      end
     end
 
     describe ".unobserve_class_method" do
@@ -201,6 +297,28 @@ describe PulseMeter::Observer do
         remove_observer
         dummy.incr
         expect(sensor.value).to eq(1)
+      end
+
+      context "works independently on inherited classes with" do
+        before do
+          [:class_method, :only_parent_class_method].each do |method|
+            described_class.observe_class_method(ParentDummy, method, sensor)
+            described_class.observe_class_method(ChildDummy, method, sensor)
+
+            described_class.unobserve_class_method(ParentDummy, method)
+            described_class.unobserve_class_method(ChildDummy, method)
+          end
+        end
+
+        it "redefined methods" do
+          expect(ParentDummy.class_method).to eq('parent.class')
+          expect(ChildDummy.class_method).to eq('child.class')
+        end
+
+        it "inherited methods" do
+          expect(ParentDummy.only_parent_class_method).to eq('parent.class')
+          expect(ChildDummy.only_parent_class_method).to eq('parent.class')
+        end
       end
     end
   end
