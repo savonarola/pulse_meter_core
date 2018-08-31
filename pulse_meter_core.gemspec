@@ -17,7 +17,6 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = "0.5.5"
 
-  gem.add_runtime_dependency('json')
   gem.add_runtime_dependency('redis')
   gem.add_runtime_dependency('tzinfo')
 
@@ -30,5 +29,4 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency('simplecov')
   gem.add_development_dependency('timecop')
   gem.add_development_dependency('yard')
-
 end
